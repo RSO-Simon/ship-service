@@ -12,10 +12,11 @@ public class ShipEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    // Ownership
+    private Long ownerUserId;
+
     // Header info
     private String name;
-
-
     private String size;
     private int length;
     private int width;
@@ -45,6 +46,13 @@ public class ShipEntity {
 
     public ShipEntity() {}
 
+    public Long getOwnerUserId() {
+        return ownerUserId;
+    }
+
+    public void setOwnerUserId(Long ownerUserId) {
+        this.ownerUserId = ownerUserId;
+    }
 
     public Long getId() {
         return id;

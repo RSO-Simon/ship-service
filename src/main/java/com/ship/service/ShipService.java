@@ -16,22 +16,27 @@ import java.util.stream.Collectors;
 public class ShipService {
 
     private final ShipRepository repo;
+    private final ShipMapper mapper;
 
-    public ShipService(ShipRepository repo) {
+    public ShipService(ShipRepository repo, ShipMapper mapper) {
         this.repo = repo;
+        this.mapper = mapper;
     }
 
     public List<ShipDto> getAll() {
-        return repo.findAll().stream().map(ShipMapper::toDto).collect(Collectors.toList());
+        return mapper.toDtoList(repo.findAll());
+//        return repo.findAll().stream().map(ShipMapper::toDto).collect(Collectors.toList());
     }
 
     public ShipDto create(ShipDto ship) {
-        ShipEntity shipEntity = ShipMapper.toEntity(ship);
-        return ShipMapper.toDto(repo.save(shipEntity));
+        ShipEntity entity = mapper.toEntity(ship);
+        return mapper.toDto(repo.save(entity));
+//        ShipEntity shipEntity = ShipMapper.toEntity(ship);
+//        return ShipMapper.toDto(repo.save(shipEntity));
     }
 
     public Optional<ShipDto> getById(Long id) {
-        return repo.findById(id).map(ShipMapper::toDto);
+        return repo.findById(id).map(mapper::toDto);
     }
 
     public boolean delete(Long id) {

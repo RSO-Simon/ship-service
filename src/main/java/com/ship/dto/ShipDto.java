@@ -5,6 +5,9 @@ import java.util.List;
 public class ShipDto {
     private Long id;
 
+     // Ownership
+    private Long ownerUserId;
+
     // Header info
     private String name;
     private String size;
@@ -35,6 +38,14 @@ public class ShipDto {
     private int attunementSlots;
 
     public ShipDto() {}
+
+    public Long getOwnerUserId() {
+        return ownerUserId;
+    }
+
+    public void setOwnerUserId(Long ownerUserId) {
+        this.ownerUserId = ownerUserId;
+    }
 
     public Long getId() {
         return id;
