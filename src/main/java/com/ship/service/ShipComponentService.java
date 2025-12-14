@@ -3,8 +3,9 @@ package com.ship.service;
 import com.ship.dto.ShipComponentDto;
 import com.ship.mapper.ShipComponentMapper;
 import com.ship.model.ShipComponentEntity;
-import com.ship.model.ShipEntity;
 import com.ship.repository.ShipComponentRepository;
+import com.ship.repository.ShipRepository;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -14,41 +15,68 @@ import java.util.Optional;
 @Service
 public class ShipComponentService {
 
-    private final ShipComponentRepository repo;
+    private final ShipComponentRepository componentRepo;
+    private final ShipRepository shipRepo;
     private final ShipComponentMapper mapper;
 
-    public ShipComponentService(ShipComponentRepository repo, ShipComponentMapper mapper) {
-        this.repo = repo;
+    public ShipComponentService(ShipComponentRepository componentRepo, ShipRepository shipRepo, ShipComponentMapper mapper) {
+        this.componentRepo = componentRepo;
+        this.shipRepo = shipRepo;
         this.mapper = mapper;
     }
 
-    public List<ShipComponentDto> getComponentsForShip(long shipId) {
-        List<ShipComponentEntity> components = repo.findByShipId(shipId);
-        return mapper.toDtoList(components);
+    public Optional<List<ShipComponentDto>> getComponentsForShip(Long shipId, Long ownerUserId) {
+        return shipRepo.findByOwnerUserIdAndId(ownerUserId, shipId)
+                .map(ship -> mapper.toDtoList(componentRepo.findByShipId(ship.getId())));
     }
 
-    public ShipComponentDto addComponentToShip(long shipId, ShipComponentDto dto) {
+    @Transactional
+    public Optional<ShipComponentDto> addComponentToShip(Long shipId, ShipComponentDto dto, Long ownerUserId) {
+        if (shipRepo.findByOwnerUserIdAndId(ownerUserId, shipId).isEmpty())
+                return Optional.empty();
+
         dto.setShipId(shipId);
         ShipComponentEntity component = mapper.toEntity(dto);
-        ShipComponentEntity componentSaved = repo.save(component);
+        ShipComponentEntity componentSaved = componentRepo.save(component);
 
-        return mapper.toDto(componentSaved);
+        return Optional.of(mapper.toDto(componentSaved));
     }
 
-    public Optional<ShipComponentDto> getComponentForShip(long shipId, long componentId) {
-        return repo.findById(componentId)
+    @Transactional
+    public Optional<ShipComponentDto> updateComponent(Long shipId, Long componentId, Long ownerUserId, ShipComponentDto component) {
+        if (shipRepo.findByOwnerUserIdAndId(ownerUserId, shipId).isEmpty())
+            return Optional.empty();
+
+        return componentRepo.findById(componentId)
+                .map(entity -> {
+                    component.setId(shipId);
+                    component.setShipId(shipId);
+
+                    return mapper.toDto(componentRepo.save(mapper.toEntity(component)));
+                });
+    }
+
+    public Optional<ShipComponentDto> getComponentForShip(Long shipId, Long componentId, Long ownerUserId) {
+        if (shipRepo.findByOwnerUserIdAndId(ownerUserId, shipId).isEmpty())
+            return Optional.empty();
+
+        return componentRepo.findById(componentId)
                 .filter(entity -> entity.getShipId().equals(shipId))
                 .map(mapper::toDto);
     }
 
-    public boolean deleteComponentForShip(long shipId, long componentId) {
-        Optional<ShipComponentEntity> component = repo.findById(componentId)
+    @Transactional
+    public boolean deleteComponentForShip(Long shipId, Long componentId, Long ownerUserId) {
+        if (shipRepo.findByOwnerUserIdAndId(ownerUserId, shipId).isEmpty())
+            return false;
+
+        Optional<ShipComponentEntity> component = componentRepo.findById(componentId)
                 .filter(entity -> entity.getShipId().equals(shipId));
         if (component.isEmpty()) {
             return false;
         }
 
-        repo.delete(component.get());
+        componentRepo.delete(component.get());
         return true;
     }
 }

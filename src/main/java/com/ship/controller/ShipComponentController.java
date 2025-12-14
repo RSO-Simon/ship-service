@@ -12,31 +12,53 @@ import java.util.List;
 @RequestMapping("/api/ships/{shipId}/components")
 public class ShipComponentController {
 
-    private ShipComponentService service;
+    private final ShipComponentService service;
 
     public ShipComponentController(ShipComponentService service) {
         this.service = service;
     }
 
     @GetMapping
-    public List<ShipComponentDto> getShipComponents(@PathVariable("shipId") Long shipId) {
-        return service.getComponentsForShip(shipId);
+    public ResponseEntity<List<ShipComponentDto>> getShipComponents(
+            @PathVariable("shipId") Long shipId,
+            @RequestParam Long ownerUserId
+
+    ) {
+        return service.getComponentsForShip(shipId, ownerUserId)
+                .map(ResponseEntity::ok)
+                .orElse(ResponseEntity.notFound().build());
     }
 
     @PostMapping
-    public ShipComponentDto addComponent(
+    public ResponseEntity<ShipComponentDto> addComponent(
             @PathVariable("shipId") Long shipId,
-            @RequestBody ShipComponentDto dto
+            @RequestBody ShipComponentDto dto,
+            @RequestParam Long ownerUserId
     ) {
-        return service.addComponentToShip(shipId, dto);
+        return service.addComponentToShip(shipId, dto, ownerUserId)
+                .map(ResponseEntity::ok)
+                .orElse(ResponseEntity.notFound().build());
+    }
+
+    @PutMapping("/{componentId}")
+    public ResponseEntity<ShipComponentDto> update(
+            @PathVariable Long shipId,
+            @PathVariable Long componentId,
+            @RequestParam Long ownerUserId,
+            @RequestBody ShipComponentDto component
+    ) {
+        return service.updateComponent(shipId, componentId, ownerUserId, component)
+                .map(ResponseEntity::ok)
+                .orElse(ResponseEntity.notFound().build());
     }
 
     @GetMapping("/{componentId}")
     public ResponseEntity<ShipComponentDto> getComponent(
             @PathVariable Long shipId,
-            @PathVariable Long componentId
+            @PathVariable Long componentId,
+            @RequestParam Long ownerUserId
     ) {
-        return service.getComponentForShip(shipId, componentId)
+        return service.getComponentForShip(shipId, componentId, ownerUserId)
                 .map(ResponseEntity::ok)
                 .orElse(ResponseEntity.notFound().build());
     }
@@ -44,9 +66,10 @@ public class ShipComponentController {
     @DeleteMapping("/{componentId}")
     public ResponseEntity<Void> deleteComponent(
             @PathVariable Long shipId,
-            @PathVariable Long componentId
+            @PathVariable Long componentId,
+            @RequestParam Long ownerUserId
     ) {
-        if(service.deleteComponentForShip(shipId, componentId)) {
+        if(service.deleteComponentForShip(shipId, componentId, ownerUserId)) {
             return ResponseEntity.noContent().build();
         }
         return ResponseEntity.notFound().build();

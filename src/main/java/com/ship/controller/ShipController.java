@@ -18,25 +18,49 @@ public class ShipController {
     }
 
     @GetMapping
-    public List<ShipDto> getAll() {
-        return shipService.getAll();
+    public List<ShipDto> getAllForUser(
+            @RequestParam Long ownerUserId
+    ) {
+        return shipService.getAllForUser(ownerUserId);
     }
 
     @PostMapping
-    public ShipDto create(@RequestBody ShipDto ship) {
-        return shipService.create(ship);
+    public ResponseEntity<ShipDto> create(
+            @RequestBody ShipDto ship,
+            @RequestParam Long ownerUserId
+    ) {
+        return shipService.create(ship, ownerUserId)
+                .map(ResponseEntity::ok)
+                .orElse(ResponseEntity.notFound().build());
     }
 
-    @GetMapping("/{id}")
-    public ResponseEntity<ShipDto> getById(@PathVariable Long id) {
-        return shipService.getById(id)
+    @PutMapping("/{shipId}")
+    public ResponseEntity<ShipDto> update(
+            @PathVariable Long shipId,
+            @RequestParam Long ownerUserId,
+            @RequestBody ShipDto ship
+    ) {
+        return shipService.updateShip(shipId, ownerUserId, ship)
+                .map(ResponseEntity::ok)
+                .orElse(ResponseEntity.notFound().build());
+    }
+
+    @GetMapping("/{shipId}")
+    public ResponseEntity<ShipDto> getById(
+            @PathVariable Long shipId,
+            @RequestParam Long ownerUserId
+    ) {
+        return shipService.getById(shipId, ownerUserId)
                 .map(ResponseEntity::ok)
                 .orElseGet(() -> ResponseEntity.notFound().build());
     }
 
-    @DeleteMapping("/{id}")
-    public ResponseEntity<Void> delete(@PathVariable Long id) {
-        if (shipService.delete(id))
+    @DeleteMapping("/{shipId}")
+    public ResponseEntity<Void> delete(
+            @PathVariable Long shipId,
+            @RequestParam Long ownerUserId
+    ) {
+        if (shipService.delete(shipId, ownerUserId))
             return ResponseEntity.noContent().build();
         else
             return ResponseEntity.notFound().build();
