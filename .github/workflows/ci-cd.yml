@@ -34,6 +34,9 @@ jobs:
     needs: build-test
     if: github.event_name == 'push'
     steps:
+      - name: Build JAR (skip tests)
+        run: mvn -B clean package -DskipTests
+
       - name: Checkout
         uses: actions/checkout@v4
 
