@@ -28,7 +28,10 @@ jobs:
         run: mvn -B clean verify
 
       - name: Set lowercase image name
-        run: echo "IMAGE=ghcr.io/${GITHUB_REPOSITORY,,}" >> $GITHUB_ENV
+        shell: bash
+        run: echo "OWNER_LC=${OWNER,,}" >> "$GITHUB_ENV"
+        env:
+          OWNER: ${{ github.repository_owner }}
 
   docker-build-push:
     runs-on: ubuntu-latest
@@ -54,5 +57,5 @@ jobs:
           context: .
           push: true
           tags: |
-            ${{ env.IMAGE }}:latest
-            ${{ env.IMAGE }}:${{ github.sha }}
+            ghcr.io/${{ env.OWNER_LC }}/ship-service:latest
+            ghcr.io/${{ env.OWNER_LC }}/ship-service:${{ github.sha }}
