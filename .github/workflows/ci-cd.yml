@@ -59,10 +59,6 @@ jobs:
           registry: ghcr.io
           username: ${{ github.actor }}
           password: ${{ secrets.GITHUB_TOKEN }}
-      - name: Verify JAR exists
-        run: |
-          ls -la
-          ls -la target || true
 
       - name: Prepare image tags
         id: prep
@@ -73,8 +69,6 @@ jobs:
           echo "${IMAGE}:latest" >> "$GITHUB_OUTPUT"
           echo "${IMAGE}:${GITHUB_SHA}" >> "$GITHUB_OUTPUT"
           echo "EOF" >> "$GITHUB_OUTPUT"
-          echo "IMAGE=$IMAGE"
-
 
       - name: Build & push image
         uses: docker/build-push-action@v6
