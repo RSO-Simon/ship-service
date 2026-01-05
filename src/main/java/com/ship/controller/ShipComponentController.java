@@ -52,6 +52,17 @@ public class ShipComponentController {
                 .orElse(ResponseEntity.notFound().build());
     }
 
+    @PutMapping
+    public ResponseEntity<ShipComponentDto[]> updateComponents(
+            @PathVariable Long shipId,
+            @RequestParam Long ownerUserId,
+            @RequestBody List<ShipComponentDto> components
+    ) {
+        return service.updateComponents(shipId, ownerUserId, components)
+                .map(ResponseEntity::ok)
+                .orElse(ResponseEntity.notFound().build());
+    }
+
     @GetMapping("/{componentId}")
     public ResponseEntity<ShipComponentDto> getComponent(
             @PathVariable Long shipId,

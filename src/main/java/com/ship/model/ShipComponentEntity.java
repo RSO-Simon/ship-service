@@ -3,7 +3,11 @@ package com.ship.model;
 import jakarta.persistence.*;
 
 @Entity
-@Table(name = "ship_components")
+@Table(name = "ship_components",
+uniqueConstraints = @UniqueConstraint(
+        name = "uk_ship_component_type",
+        columnNames = {"ship_id", "component_type_id"}
+))
 public class ShipComponentEntity {
 
     @Id
@@ -11,9 +15,11 @@ public class ShipComponentEntity {
     private Long id;
 
     // Ownership ;)
-    private Long shipId;
+    @ManyToOne(fetch = FetchType.LAZY, optional = false)
+    @JoinColumn(name = "ship_id", nullable = false)
+    private ShipEntity ship;
 
-    // TMP TO DO fix
+    @Column(name = "component_type_id", nullable = false)
     private Long componentTypeId;
 
     private int quantity;
@@ -36,12 +42,12 @@ public class ShipComponentEntity {
         this.id = id;
     }
 
-    public Long getShipId() {
-        return shipId;
+    public ShipEntity getShip() {
+        return ship;
     }
 
-    public void setShipId(Long shipId) {
-        this.shipId = shipId;
+    public void setShip(ShipEntity ship) {
+        this.ship = ship;
     }
 
     public Long getComponentTypeId() {

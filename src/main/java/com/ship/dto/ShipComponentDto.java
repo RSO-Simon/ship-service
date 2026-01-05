@@ -4,9 +4,6 @@ public class ShipComponentDto {
 
     private Long id;
 
-    // Ownership ;)
-    private Long shipId;
-
     // TMP TO DO fix
     private Long componentTypeId;
 
@@ -28,13 +25,6 @@ public class ShipComponentDto {
         this.id = id;
     }
 
-    public Long getShipId() {
-        return shipId;
-    }
-
-    public void setShipId(Long shipId) {
-        this.shipId = shipId;
-    }
 
     public Long getComponentTypeId() {
         return componentTypeId;
