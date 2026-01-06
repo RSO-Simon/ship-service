@@ -115,7 +115,7 @@ jobs:
           helm upgrade --install ship-service infrastructure/helm/ship-service \
             --namespace rso --create-namespace \
             --set image.tag=${GITHUB_SHA}
-          
+
 
       - name: Trigger infra deploy-all (ship-service)
         env:
