@@ -78,7 +78,6 @@ jobs:
           tags: ${{ steps.prep.outputs.tags }}
 
 
-
       - name: Trigger infra workflow (deploy-ship-service)
         env:
           INFRA_REPO_TOKEN: ${{ secrets.INFRA_REPO_TOKEN }}
