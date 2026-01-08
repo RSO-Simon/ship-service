@@ -3,6 +3,7 @@ package com.ship.service;
 import com.ship.dto.ShipDto;
 import com.ship.mapper.ShipMapper;
 import com.ship.model.ShipEntity;
+import com.ship.repository.ShipComponentRepository;
 import com.ship.repository.ShipRepository;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.stereotype.Service;
@@ -16,10 +17,12 @@ public class ShipService {
 
     private final ShipRepository repo;
     private final ShipMapper mapper;
+    private final ShipComponentRepository shipComponentRepository;
 
-    public ShipService(ShipRepository repo, ShipMapper mapper) {
+    public ShipService(ShipRepository repo, ShipMapper mapper, ShipComponentRepository shipComponentRepository) {
         this.repo = repo;
         this.mapper = mapper;
+        this.shipComponentRepository = shipComponentRepository;
     }
 
     public List<ShipDto> getAllForUser(Long userId) {
@@ -58,6 +61,7 @@ public class ShipService {
         if (entity.isEmpty() || !entity.get().getOwnerUserId().equals(ownerUserId)) {
             return false;
         }
+        shipComponentRepository.deleteByShip(entity.get());
 
         repo.delete(entity.get());
         return true;
