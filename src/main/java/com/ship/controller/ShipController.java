@@ -1,9 +1,12 @@
 package com.ship.controller;
 
+import com.ship.auth.AuthContext;
 import com.ship.dto.ShipDto;
 import com.ship.service.ShipService;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.server.ResponseStatusException;
 
 import java.util.List;
 
@@ -19,16 +22,22 @@ public class ShipController {
 
     @GetMapping
     public List<ShipDto> getAllForUser(
-            @RequestParam Long ownerUserId
     ) {
+        Long ownerUserId = AuthContext.getOwnerUserId();
+        if (ownerUserId == null) {
+            throw new ResponseStatusException(HttpStatus.UNAUTHORIZED);
+        }
         return shipService.getAllForUser(ownerUserId);
     }
 
     @PostMapping
     public ResponseEntity<ShipDto> create(
-            @RequestBody ShipDto ship,
-            @RequestParam Long ownerUserId
+            @RequestBody ShipDto ship
     ) {
+        Long ownerUserId = AuthContext.getOwnerUserId();
+        if (ownerUserId == null) {
+            throw new ResponseStatusException(HttpStatus.UNAUTHORIZED);
+        }
         return shipService.create(ship, ownerUserId)
                 .map(ResponseEntity::ok)
                 .orElse(ResponseEntity.notFound().build());
@@ -37,9 +46,12 @@ public class ShipController {
     @PutMapping("/{shipId}")
     public ResponseEntity<ShipDto> update(
             @PathVariable Long shipId,
-            @RequestParam Long ownerUserId,
             @RequestBody ShipDto ship
     ) {
+        Long ownerUserId = AuthContext.getOwnerUserId();
+        if (ownerUserId == null) {
+            throw new ResponseStatusException(HttpStatus.UNAUTHORIZED);
+        }
         return shipService.updateShip(shipId, ownerUserId, ship)
                 .map(ResponseEntity::ok)
                 .orElse(ResponseEntity.notFound().build());
@@ -47,9 +59,12 @@ public class ShipController {
 
     @GetMapping("/{shipId}")
     public ResponseEntity<ShipDto> getById(
-            @PathVariable Long shipId,
-            @RequestParam Long ownerUserId
+            @PathVariable Long shipId
     ) {
+        Long ownerUserId = AuthContext.getOwnerUserId();
+        if (ownerUserId == null) {
+            throw new ResponseStatusException(HttpStatus.UNAUTHORIZED);
+        }
         return shipService.getById(shipId, ownerUserId)
                 .map(ResponseEntity::ok)
                 .orElseGet(() -> ResponseEntity.notFound().build());
@@ -57,9 +72,12 @@ public class ShipController {
 
     @DeleteMapping("/{shipId}")
     public ResponseEntity<Void> delete(
-            @PathVariable Long shipId,
-            @RequestParam Long ownerUserId
+            @PathVariable Long shipId
     ) {
+        Long ownerUserId = AuthContext.getOwnerUserId();
+        if (ownerUserId == null) {
+            throw new ResponseStatusException(HttpStatus.UNAUTHORIZED);
+        }
         if (shipService.delete(shipId, ownerUserId))
             return ResponseEntity.noContent().build();
         else

@@ -31,9 +31,7 @@ public class ShipService {
 
     @Transactional
     public Optional<ShipDto> create(ShipDto ship, Long ownerUserId) {
-        if (!ship.getOwnerUserId().equals(ownerUserId)) {
-            return Optional.empty();
-        }
+        ship.setOwnerUserId(ownerUserId);
         ShipEntity entity = mapper.toEntity(ship);
         return Optional.of(mapper.toDto(repo.save(entity)));
     }
@@ -58,7 +56,7 @@ public class ShipService {
     @Transactional
     public boolean delete(Long shipId, Long ownerUserId) {
         Optional<ShipEntity> entity = repo.findById(shipId);
-        if (entity.isEmpty() || !entity.get().getOwnerUserId().equals(ownerUserId)) {
+        if (entity.isEmpty()) {
             return false;
         }
         shipComponentRepository.deleteByShip(entity.get());
