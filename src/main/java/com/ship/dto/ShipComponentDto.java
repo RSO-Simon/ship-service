@@ -1,20 +1,63 @@
 package com.ship.dto;
 
+import io.swagger.v3.oas.annotations.media.Schema;
+
 public class ShipComponentDto {
 
+    @Schema(
+            description = "Unique identifier of the ship component",
+            example = "42",
+            accessMode = Schema.AccessMode.READ_ONLY
+    )
     private Long id;
 
-    // TMP TO DO fix
+    @Schema(
+            description = "Identifier of the component type definition",
+            example = "5"
+    )
     private Long componentTypeId;
 
+    @Schema(
+            description = "Number of components of this type installed on the ship",
+            example = "2"
+    )
     private int quantity;
 
     // Component data
+    @Schema(
+            description = "Display name of the component",
+            example = "Ballista"
+    )
     private String name;
+
+    @Schema(
+            description = "Component category or type",
+            example = "Weapon"
+    )
     private String type;
+
+    @Schema(
+            description = "Current or maximum health of the component",
+            example = "50"
+    )
     private int health;
+
+    @Schema(
+            description = "Minimum damage required to affect this component",
+            example = "10"
+    )
     private int damageThreshold;
+
+    @Schema(
+            description = "Armor Class (AC) of the component",
+            example = "15"
+    )
     private int armorClass;
+
+    @Schema(
+            description = "Detailed description of the component",
+            example = "A heavy ship-mounted ballista used for long-range combat"
+    )
     private String description;
 
     public Long getId() {

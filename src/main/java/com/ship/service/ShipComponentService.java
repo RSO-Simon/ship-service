@@ -63,7 +63,7 @@ public class ShipComponentService {
     }
 
     @Transactional
-    public Optional<ShipComponentDto[]> updateComponents(Long shipId, Long ownerUserId, List<ShipComponentDto> components) {
+    public Optional<List<ShipComponentDto>> updateComponents(Long shipId, Long ownerUserId, List<ShipComponentDto> components) {
         Optional<ShipEntity> shipEntityOptional = shipRepo.findByOwnerUserIdAndId(ownerUserId, shipId);
         if (shipEntityOptional.isEmpty())
             return Optional.empty();
@@ -125,10 +125,11 @@ public class ShipComponentService {
             componentRepo.saveAll(toUpsert);
         }
 
+
         List<ShipComponentEntity> finalState = componentRepo.findByShip_Id(shipId);
-        ShipComponentDto[] out = finalState.stream()
+        List<ShipComponentDto> out = finalState.stream()
                 .map(mapper::toDto)
-                .toArray(ShipComponentDto[]::new);
+                .toList();
 
         return Optional.of(out);
     }
