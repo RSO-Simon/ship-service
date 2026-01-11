@@ -22,7 +22,7 @@ import java.util.List;
         description = "Operations for managing ships owned by the authenticated user"
 )
 @RestController
-@RequestMapping("/api/ships")
+@RequestMapping
 public class ShipController {
 
     private final ShipService shipService;
