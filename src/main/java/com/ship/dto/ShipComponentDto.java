@@ -56,7 +56,7 @@ public class ShipComponentDto {
 
     @Schema(
             description = "Detailed description of the component",
-            example = "A heavy ship-mounted ballista used for long-range combat"
+            example = "Ranged Weapon Attack: +5 to hit, range 200/800 ft. Hit: 27 (5d10) bludgeoning damage. Can't hit targets within 60 ft. of it. "
     )
     private String description;
 
