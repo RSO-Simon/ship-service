@@ -2,7 +2,15 @@
 
 ## Overview
 Ship Service is a Spring Boot microservice responsible for managing ships and their ship-specific components.  
-Each ship is owned by a user, and all operations are locked to that user using and Oauth 2.0 authorization.
+Each ship is owned by a user, and all operations are locked to that user using Oauth 2.0 authorization.
+
+## Responsibilities
+* Manage ship and ship-component entities
+* Store data ins PostgreSQL
+* Expose REST endpoints 
+* Document REST endpoints
+* Enforce user ownership
+* Run as a containerized workload in Kubernetes
 
 ## API
 The service exposes a REST API to create, obtain or change ship data and their components.
@@ -26,8 +34,8 @@ The service exposes a REST API to create, obtain or change ship data and their c
 | PUT     | /{shipId}/components/{componentId} | Update the ship component with {componentId} that belongs to the ship with {shipId}. |
 | DELETE  | /{shipId}/components/{componentId} | Delete the ship component with {componentId} that belongs to the ship with {shipId}. |
 
-## Authentication
-User authentication is handled using a JSON Web Token (JWT). The authenticated user ID is obtained form the JWT and used to enforce ownership. Requests without a valid JWT are rejected.
+## Authorization
+User authorization is handled using a JSON Web Token (JWT). The authenticated user ID is obtained form the JWT and used to enforce ownership. Requests without a valid JWT are rejected.
 
 ## Database 
 The database is a PostgreSQL which schema is managed automatically by Hibernate.
