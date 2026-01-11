@@ -23,8 +23,8 @@ public class JwtAuthFilter extends OncePerRequestFilter {
         String p = request.getRequestURI();
         return p.startsWith("/actuator")
                 || p.startsWith("/api/ships/actuator")
-                || p.startsWith("/swagger")
-                || p.startsWith("/v3/api-docs");
+                || p.startsWith("/api/ships/swagger")
+                || p.startsWith("/api/ships/v3/api-docs");
     }
 
     @Override
